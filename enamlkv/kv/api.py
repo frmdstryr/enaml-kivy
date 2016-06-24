@@ -18,6 +18,8 @@ KV_CONTROLS = dict(
     AnchorLayout = lambda: get_control('kivy.uix.anchorlayout.AnchorLayout'),
     PageLayout = lambda: get_control('kivy.uix.pagelayout.PageLayout'),
     ScatterLayout = lambda: get_control('kivy.uix.scatterlayout.ScatterLayout'),
+    ScatterPlaneLayout = lambda: get_control('kivy.uix.scatterlayou.ScatterPlaneLayout'),
+    
     StackLayout = lambda: get_control('kivy.uix.stacklayout.StackLayout'),
     # Ux Widgets
     Label = lambda: get_control('kivy.uix.label.Label'),
@@ -54,15 +56,75 @@ KV_CONTROLS = dict(
     
     DropDown = lambda: get_control("kivy.uix.dropdown.DropDown"),
     Spinner = lambda: get_control("kivy.uix.spinner.Spinner"),
+    SpinnerButton = lambda: get_control("kivy.uix.spinner.SpinnerButton"),
     Splitter = lambda: get_control("kivy.uix.splitter.Splitter"),
     ColorPicker = lambda: get_control("kivy.uix.colorpicker.ColorPicker",read_only_properties=['wheel']),
+    
+    Popup = lambda: get_control("kivy.uix.popup.Popup"),
     
     TabbedPanel = lambda: get_control("kivy.uix.tabbedpanel.TabbedPanel",read_only_properties=['content','tab_list','default_tab',"_current_tab","_default_tab"]),
     TabbedPanelContent = lambda: get_control("kivy.uix.tabbedpanel.TabbedPanelContent"),
     TabbedPanelHeader = lambda: get_control("kivy.uix.tabbedpanel.TabbedPanelHeader"),
     TabbedPanelItem = lambda: get_control("kivy.uix.tabbedpanel.TabbedPanelItem"),
     TabbedPanelStrip = lambda: get_control("kivy.uix.tabbedpanel.TabbedPanelStrip"),
+    
     ScrollView = lambda: get_control("kivy.uix.scrollview.ScrollView",read_only_properties=['vbar','bbox']),
+    
+    RstDocument = lambda: get_control("kivy.uix.rst.RstDocument"),
+    RstVideoPlayer = lambda: get_control("kivy.uix.rst.RstVideoPlayer"),
+    RstTitle = lambda: get_control("kivy.uix.rst.RstTitle"),
+    RstParagraph = lambda: get_control("kivy.uix.rst.RstParagraph"),
+    RstTerm = lambda: get_control("kivy.uix.rst.RstTerm"),
+    RstBlockQuote = lambda: get_control("kivy.uix.rst.RstBlockQuote"),
+    RstLiteralBlock = lambda: get_control("kivy.uix.rst.RstLiteralBlock"),
+    RstList = lambda: get_control("kivy.uix.rst.RstList"),
+    RstListItem = lambda: get_control("kivy.uix.rst.RstListItem"),
+    RstListBullet = lambda: get_control("kivy.uix.rst.RstListBullet"),
+    RstSystemMessage = lambda: get_control("kivy.uix.rst.RstSystemMessage"),
+    RstWarning = lambda: get_control("kivy.uix.rst.RstWarning"),
+    RstNote = lambda: get_control("kivy.uix.rst.RstNote"),
+    RstImage = lambda: get_control("kivy.uix.rst.RstImage"),
+    RstAsyncImage = lambda: get_control("kivy.uix.rst.RstAsyncImage"),
+    RstDefinitionList = lambda: get_control("kivy.uix.rst.RstDefinitionList"),
+    RstDefinition = lambda: get_control("kivy.uix.rst.RstDefinition"),
+    RstFieldList = lambda: get_control("kivy.uix.rst.RstFieldList"),
+    RstFieldName = lambda: get_control("kivy.uix.rst.RstFieldName"),
+    RstFieldBody = lambda: get_control("kivy.uix.rst.RstFieldBody"),
+    RstGridLayout = lambda: get_control("kivy.uix.rst.RstGridLayout"),
+    RstTable = lambda: get_control("kivy.uix.rst.RstTable"),
+    RstEntry = lambda: get_control("kivy.uix.rst.RstEntry"),
+    RstTransition = lambda: get_control("kivy.uix.rst.RstTransition"),
+    RstEmptySpace = lambda: get_control("kivy.uix.rst.RstEmptySpace"),
+    RstDefinitionSpace = lambda: get_control("kivy.uix.rst.RstDefinitionSpace"),
+    
+    Sandbox = lambda: get_control("kivy.uix.sandbox.Sandbox"),
+    Scatter = lambda: get_control("kivy.uix.scatter.Scatter"),
+    ScatterPlane = lambda: get_control("kivy.uix.scatter.ScatterPlane"),
+    
+    Settings = lambda: get_control("kivy.uix.settings.Settings"),
+    SettingsWithSidebar = lambda: get_control("kivy.uix.settings.SettingsWithSidebar"),
+    SettingsWithSpinner = lambda: get_control("kivy.uix.settings.SettingsWithSpinner"),
+    SettingsWithTabbedPanel = lambda: get_control("kivy.uix.settings.SettingsWithTabbedPanel"),
+    SettingsWithNoMenu = lambda: get_control("kivy.uix.settings.SettingsWithNoMenu"),
+    SettingSpacer = lambda: get_control("kivy.uix.settings.SettingSpacer"),
+    SettingItem = lambda: get_control("kivy.uix.settings.SettingItem"),
+    SettingBoolean = lambda: get_control("kivy.uix.settings.SettingBoolean"),
+    SettingString = lambda: get_control("kivy.uix.settings.SettingString"),
+    SettingPath = lambda: get_control("kivy.uix.settings.SettingPath"),
+    SettingNumeric = lambda: get_control("kivy.uix.settings.SettingNumeric"),
+    SettingOptions = lambda: get_control("kivy.uix.settings.SettingOptions"),
+    SettingTitle = lambda: get_control("kivy.uix.settings.SettingTitle"),
+    SettingsPanel = lambda: get_control("kivy.uix.settings.SettingsPanel"),
+    InterfaceWithSidebar = lambda: get_control("kivy.uix.settings.InterfaceWithSidebar"),
+    InterfaceWithSpinner = lambda: get_control("kivy.uix.settings.InterfaceWithSpinner"),
+    InterfaceWithNoMenu = lambda: get_control("kivy.uix.settings.InterfaceWithNoMenu"),
+    InterfaceWithTabbedPanel = lambda: get_control("kivy.uix.settings.InterfaceWithTabbedPanel"),
+    ContentPanel = lambda: get_control("kivy.uix.settings.ContentPanel"),
+    MenuSidebar = lambda: get_control("kivy.uix.settings.MenuSidebar"),
+    SettingSidebarLabel = lambda: get_control("kivy.uix.settings.SettingSidebarLabel"),
+    
+    
+    VKeyboard = lambda: get_control("kivy.uix.vkeyboard.VKeyboard"),
 )
 
 class DynamicImporter(ModuleType):
@@ -81,3 +143,5 @@ new_module.__dict__.update({
     '__doc__':          __doc__,
     '__all__':           KV_CONTROLS.keys(),
 })
+
+
