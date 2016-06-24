@@ -27,7 +27,7 @@ KV_CONTROLS = dict(
     AsyncImage = lambda: get_control('kivy.uix.image.AsyncImage'),
     Slider = lambda: get_control('kivy.uix.slider.Slider'),
     ProgressBar = lambda: get_control('kivy.uix.progressbar.ProgressBar'),
-    TextInput = lambda: get_control('kivy.uix.textinput.TextInput'),
+    TextInput = lambda: get_control('kivy.uix.textinput.TextInput',read_only_properties=['keyboard']),
     ToggleButton = lambda: get_control('kivy.uix.togglebutton.ToggleButton'),
     Switch = lambda: get_control('kivy.uix.switch.Switch'),
     Video = lambda: get_control('kivy.uix.video.Video'),
@@ -71,7 +71,7 @@ class DynamicImporter(ModuleType):
     """
     
     def __getattr__(self,name):
-        print("Loading {}".format(name))
+        #print("Loading {}".format(name))
         return KV_CONTROLS[name]()
 
 old_module = sys.modules[__name__] # So it's not garbage collected
