@@ -6,7 +6,7 @@
 # The full license is in the file LICENSE, distributed with this software.
 #------------------------------------------------------------------------------
 from enaml.widgets.api import Window, Container#, Label
-from enamlkv.widgets.api import *
+from enamlkv.kv.api import *
 from enaml.core.looper import Looper
 
 pages = ['Checkboxes','Labels','TextInput','Slider','Switch','Progress','ColorPicker','Tabs','Camera']

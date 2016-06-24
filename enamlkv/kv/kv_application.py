@@ -16,7 +16,7 @@ from kivy.app import App
 from kivy.uix.widget import Widget
 
 from .k_deferred_caller import deferredCall, timedCall
-from ..widgets import api # This ensures KV_FACTORIES has loaded everything
+from enamlkv.kv import api
 from .kv_factories import KV_FACTORIES
 from .kv_mime_data import KvMimeData
 
