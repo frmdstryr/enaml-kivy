@@ -126,7 +126,7 @@ class KvApplication(Application):
     
     def create_proxy(self, declaration):
         proxy = super(KvApplication, self).create_proxy(declaration)
-        print("Created {} from {}".format(proxy,declaration))
+        #print("Created {} from {}".format(proxy,declaration))
         return proxy
     
     def build(self):

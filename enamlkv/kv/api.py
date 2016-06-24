@@ -27,11 +27,11 @@ KV_CONTROLS = dict(
     AsyncImage = lambda: get_control('kivy.uix.image.AsyncImage'),
     Slider = lambda: get_control('kivy.uix.slider.Slider'),
     ProgressBar = lambda: get_control('kivy.uix.progressbar.ProgressBar'),
-    TextInput = lambda: get_control('kivy.uix.textinput.TextInput',read_only_properties=['keyboard','cursor_pos','cursor_col','cursor_row']),
+    TextInput = lambda: get_control('kivy.uix.textinput.TextInput',read_only_properties=['keyboard','cursor_pos','cursor_col','cursor_row','minimum_height']),
     ToggleButton = lambda: get_control('kivy.uix.togglebutton.ToggleButton'),
     Switch = lambda: get_control('kivy.uix.switch.Switch'),
     Video = lambda: get_control('kivy.uix.video.Video'),
-    Camera = lambda: get_control('kivy.uix.camera.Camera'),
+    Camera = lambda: get_control('kivy.uix.camera.Camera',read_only_properties=['norm_image_size']),
     
     Accordion = lambda: get_control("kivy.uix.accordion.Accordion"),
     AccordionItem = lambda: get_control("kivy.uix.accordion.AccordionItem"),
@@ -62,7 +62,7 @@ KV_CONTROLS = dict(
     TabbedPanelHeader = lambda: get_control("kivy.uix.tabbedpanel.TabbedPanelHeader"),
     TabbedPanelItem = lambda: get_control("kivy.uix.tabbedpanel.TabbedPanelItem"),
     TabbedPanelStrip = lambda: get_control("kivy.uix.tabbedpanel.TabbedPanelStrip"),
-    ScrollView = lambda: get_control("kivy.uix.scrollview.ScrollView"),
+    ScrollView = lambda: get_control("kivy.uix.scrollview.ScrollView",read_only_properties=['vbar','bbox']),
 )
 
 class DynamicImporter(ModuleType):
