@@ -1,3 +1,10 @@
+#------------------------------------------------------------------------------
+# Copyright (c) 2016, frmdstryr.
+#
+# Distributed under the terms of the MIT License.
+#
+# The full license is in the file LICENSE, distributed with this software.
+#------------------------------------------------------------------------------
 '''
 Created on Jun 23, 2016
 

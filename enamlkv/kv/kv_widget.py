@@ -1,9 +1,10 @@
 #------------------------------------------------------------------------------
+# Copyright (c) 2016, frmdstryr.
 # Copyright (c) 2014, Nucleic Development Team.
 #
-# Distributed under the terms of the Modified BSD License.
+# Distributed under the terms of the MIT License.
 #
-# The full license is in the file COPYING.txt, distributed with this software.
+# The full license is in the file LICENSE, distributed with this software.
 #------------------------------------------------------------------------------
 from atom.api import Typed, Coerced, Member
 
@@ -11,17 +12,10 @@ from enaml.drag_drop import DropAction
 from enaml.styling import StyleCache
 from enaml.widgets.widget import Feature, ProxyWidget
 
-#from .QtCore import Qt, QSize, QPoint
 from kivy.uix.widget import Widget
-from enaml.qt import focus_registry
-#from .QtGui import QFont, QWidget, QWidgetAction, QApplication, QDrag, QPixmap
 
-#from .q_resource_helpers import (
-#    get_cached_qcolor, get_cached_qfont, get_cached_qimage
-#)
-#from .qt_drag_drop import QtDropEvent
 from .kv_toolkit_object import KvToolkitObject
-from enaml.qt.styleutil import translate_style
+
 
 class KvWidget(KvToolkitObject, ProxyWidget):
     """ A Kv implementation of an Enaml ProxyWidget.

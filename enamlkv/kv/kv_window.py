@@ -1,31 +1,21 @@
 #------------------------------------------------------------------------------
-# Copyright (c) 2013, Nucleic Development Team.
+# Copyright (c) 2016, frmdstryr.
+# Copyright (c) 2014, Nucleic Development Team.
 #
-# Distributed under the terms of the Modified BSD License.
+# Distributed under the terms of the MIT License.
 #
-# The full license is in the file COPYING.txt, distributed with this software.
+# The full license is in the file LICENSE, distributed with this software.
 #------------------------------------------------------------------------------
-from atom.api import Instance, atomref
+from atom.api import Instance
 
 from enaml.layout.geometry import Pos, Rect, Size
-from enaml.widgets.window import ProxyWindow, CloseEvent
+from enaml.widgets.window import ProxyWindow
 
-#from .QtCore import Qt, QPoint, QRect, QSize
-#from .QtGui import QApplication, QIcon
-
-
-from .k_deferred_caller import deferredCall
 from .kv_widget import KvWidget
 from kivy.uix.widget import Widget
 from kivy.uix.floatlayout import FloatLayout
 from enamlkv.kv.kv_application import KvApplication
 
-
-# MODALITY = {
-#     'non_modal': Qt.NonModal,
-#     'application_modal': Qt.ApplicationModal,
-#     'window_modal': Qt.WindowModal,
-# }
 
 
 def finalize_close(d):

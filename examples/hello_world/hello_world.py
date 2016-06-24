@@ -1,9 +1,9 @@
 #------------------------------------------------------------------------------
-# Copyright (c) 2013, Nucleic Development Team.
+# Copyright (c) 2016, frmdstryr.
 #
-# Distributed under the terms of the Modified BSD License.
+# Distributed under the terms of the MIT License.
 #
-# The full license is in the file COPYING.txt, distributed with this software.
+# The full license is in the file LICENSE, distributed with this software.
 #------------------------------------------------------------------------------
 import enaml
 from enamlkv.kv.kv_application import KvApplication

@@ -1,9 +1,17 @@
+#------------------------------------------------------------------------------
+# Copyright (c) 2016, frmdstryr.
+# Copyright (c) 2014, Nucleic Development Team.
+#
+# Distributed under the terms of the MIT License.
+#
+# The full license is in the file LICENSE, distributed with this software.
+#------------------------------------------------------------------------------
 '''
 Created on Jun 18, 2016
 
 Create enaml Controls for each Kivy widget
 
-@author: jrm
+@author: frmdstryr
 '''
 import pydoc
 import inspect
