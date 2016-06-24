@@ -14,6 +14,7 @@ from enaml.widgets.widget import Feature, ProxyWidget
 
 from kivy.uix.widget import Widget
 
+from . import focus_registry
 from .kv_toolkit_object import KvToolkitObject
 
 
