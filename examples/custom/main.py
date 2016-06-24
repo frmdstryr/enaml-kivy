@@ -1,4 +1,6 @@
 import enaml
+import os
+os.environ['HTTP_PROXY'] = 'http://proxy-us.intel.com:911'
 import widgets
 from enamlkv.kv.kv_application import KvApplication
 from kivymd.theming import ThemeManager

@@ -16,8 +16,7 @@ from kivy.app import App
 from kivy.uix.widget import Widget
 
 from .k_deferred_caller import deferredCall, timedCall
-from enamlkv.kv import api
-from .kv_factories import KV_FACTORIES
+from . import kv_factories
 from .kv_mime_data import KvMimeData
 
 class KvApplication(Application):
@@ -39,7 +38,8 @@ class KvApplication(Application):
         super(KvApplication, self).__init__()
         self._kvapp = App()
         self._kvapp.build = self.build
-        self.resolver = ProxyResolver(factories=KV_FACTORIES)
+        self.resolver = ProxyResolver(factories=kv_factories.KV_FACTORIES)
+        kv_factories.KV_FACTORIES = self.resolver.factories # So any dynamic loads get added 
     
     @property
     def proxy(self):

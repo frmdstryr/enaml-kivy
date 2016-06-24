@@ -5,20 +5,31 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 #------------------------------------------------------------------------------
-from enaml.widgets.api import Window, Container#, Label
-from enamlkv.kv.api import *
+import random
+from enaml.widgets.api import Window
+from enamlkv.kv.api import BoxLayout,ScreenManager,Screen,ScrollView
 from enaml.core.looper import Looper
 from widgets import *
+from atom.api import Atom,List
+
+class Model(Atom):
+    items = List(default=range(5))
+    points = List(default=[(50.6394,3.057),(50.6314,3.057)])
+    screens = List(default = ['ItemList','Map'])
 
 enamldef Main(Window):
     title = "KivyMD Examples"
+    attr model = Model()
     NavigationDrawer: nav_drawer:
-        title = "Navigation"
+        title = "Screen"
         Looper:
-            iterable << range(4)
+            iterable << model.screens
             NavigationDrawerIconButton:
                 icon = 'circle'
-                text = "Item {}".format(loop_item)
+                text = "{}".format(loop_item)
+                state:: 
+                    if self.state=='normal':
+                        scr_mgr.current = loop_item
     BoxLayout:
         orientation = 'vertical'
         Toolbar:
@@ -26,13 +37,11 @@ enamldef Main(Window):
             left_action_items =  [('menu', lambda x,d=nav_drawer.proxy.widget: d.toggle())]
         ScreenManager: scr_mgr:
             Screen:
-                name = 'bottomsheet'
+                name = 'ItemList'
                 ScrollView:
                     MDList:
                         Looper:
-                            iterable << range(100)
-                            OneLineListItem:
-                                text = "One line item #{}".format(loop_item)
+                            iterable << model.items
                             TwoLineListItem:
                                 text = "Two line item #{}".format(loop_item)
                                 secondary_text = "Loopers are great!"
@@ -42,5 +51,34 @@ enamldef Main(Window):
                     size =("56dp","56dp")
                     elevation_normal = 8
                     pos_hint = {'center_x': 0.9, 'center_y': 0.1}
-                    state:: print("State is {}".format(self.state))  
+                    state::
+                        if self.state=='normal':
+                            print("Adding item") 
+                            tmp = model.items[:]
+                            tmp.append(len(tmp))
+                            model.items = tmp  
+            Screen:
+                name = 'Map'
+                MapView: map:
+                    zoom=11
+                    lat=50.6394
+                    lon=3.057
+                    Looper:
+                        iterable << model.points
+                        MapMarker:
+                            lat = loop_item[0]
+                            lon = loop_item[1]
                     
+                MDFloatingActionButton:
+                    icon ='plus'
+                    size_hint = (None, None)
+                    size =("56dp","56dp")
+                    elevation_normal = 8
+                    pos_hint = {'center_x': 0.9, 'center_y': 0.1}
+                    state::
+                        if self.state=='normal':
+                            print("Adding item") 
+                            tmp = model.points[:]
+                            tmp.append((50.6394+0.001*random.randint(-10,10),3.057+0.001*random.randint(-10,10)))
+                            model.points = tmp  
+                            map.proxy.widget.trigger_update(False)

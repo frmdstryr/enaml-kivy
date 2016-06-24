@@ -6,6 +6,7 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 #------------------------------------------------------------------------------
+from pprint import pprint
 '''
 Created on Jun 18, 2016
 
@@ -60,8 +61,6 @@ def get_control(dotted_widget_name,read_only_properties=None):
     log.info("Enaml: Creating control for {}".format(dotted_widget_name))
     read_only_properties = read_only_properties or []
     widget_name = dotted_widget_name.split('.')[-1]
-    if widget_name not in KV_FACTORIES:
-        KV_FACTORIES[widget_name] = get_factory(dotted_widget_name)
     return kivy_enaml_factory(pydoc.locate(dotted_widget_name),read_only_properties=read_only_properties)['control']
 
 def get_factory(dotted_widget_name):
@@ -84,6 +83,7 @@ def kivy_enaml_factory(widget_class,read_only_properties=None):
     
     # Try to load from cache
     if widget_class in _CACHE:
+        log.info("Enaml: Loaded {} from cache".format(widget_class))
         return _CACHE[widget_class]
 
     # Set default base classes
