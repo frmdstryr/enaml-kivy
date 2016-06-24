@@ -1,6 +1,7 @@
 # About
-A Kivy wiget toolkit for Enaml. Allows you to use the power of Enaml with Kivy apps!
+A Kivy widget toolkit for Enaml. Allows you to use the power of Enaml with Kivy apps!
 
+This is VERY early in development and still has issues.
 
 # Why
 _Why do this when Kivy lang already exists?_ 
@@ -34,7 +35,7 @@ ActionBar:
 
 ```
  
- Enaml requires you use the "pass" keyword. 
+ Enaml requires you use the `pass` keyword. 
 
  ```python
 
