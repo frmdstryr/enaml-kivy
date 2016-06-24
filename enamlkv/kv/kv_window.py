@@ -109,14 +109,6 @@ class KvWindow(KvWidget, ProxyWindow):
         if d.icon:
             self.set_icon(d.icon)
 
-    def init_layout(self):
-        """ Initialize the widget layout.
-
-        """
-        super(KvWindow, self).init_layout()
-#        for widget in self.child_widgets():
-#            self.widget.add_widget(widget)
-
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
@@ -167,9 +159,7 @@ class KvWindow(KvWidget, ProxyWindow):
         """ Set the modality of the window.
 
         """
-        print("set_modality not implemented!")
         return 
-        self.widget.setWindowModality(MODALITY[modality])
 
     def set_icon(self, icon):
         """ Set the window icon.
@@ -177,7 +167,6 @@ class KvWindow(KvWidget, ProxyWindow):
         """
         app = KvApplication.instance()
         app.proxy.icon = str(icon)
-        return
 
     def position(self):
         """ Get the position of the of the window.
@@ -195,15 +184,13 @@ class KvWindow(KvWidget, ProxyWindow):
         """ Get the size of the window.
 
         """
-        return Size(*self.widget.size)
+        return self.widget.size
 
     def set_size(self, size):
         """ Set the size of the window.
 
         """
-        size = QSize(*size)
-        if size.isValid():
-            self.widget.resize(size)
+        self.widget.size = size
 
     def geometry(self):
         """ Get the geometry of the window.
