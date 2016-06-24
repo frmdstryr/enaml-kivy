@@ -1,0 +1,43 @@
+#------------------------------------------------------------------------------
+# Copyright (c) 2013, Nucleic Development Team.
+#
+# Distributed under the terms of the Modified BSD License.
+#
+# The full license is in the file COPYING.txt, distributed with this software.
+#------------------------------------------------------------------------------
+from enaml.widgets.api import Window, Container#, Label
+from enamlkv.widgets.api import *
+from enaml.core.looper import Looper
+from widgets import *
+
+enamldef Main(Window):
+    title = "KivyMD Examples"
+    NavigationDrawer: nav_drawer:
+        title = "Navigation"
+        Looper:
+            iterable << range(4)
+            NavigationDrawerIconButton:
+                icon = 'circle'
+                text = "Item {}".format(loop_item)
+    BoxLayout:
+        orientation = 'vertical'
+        Toolbar:
+            title = "KivyMD Examples"
+            left_action_items =  [('menu', lambda x,d=nav_drawer.proxy.widget: d.toggle())]
+        ScreenManager: scr_mgr:
+            Screen:
+                name = 'bottomsheet'
+                ScrollView:
+                    MDList:
+                        Looper:
+                            iterable << range(100)
+                            OneLineListItem:
+                                text = "One line item #{}".format(loop_item)
+                MDFloatingActionButton:
+                    icon ='plus'
+                    size_hint = (None, None)
+                    size =("56dp","56dp")
+                    elevation_normal = 8
+                    pos_hint = {'center_x': 0.9, 'center_y': 0.1}
+                    state:: print("State is {}".format(self.state))  
+                    

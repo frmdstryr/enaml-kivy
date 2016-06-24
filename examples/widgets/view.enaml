@@ -1,0 +1,126 @@
+#------------------------------------------------------------------------------
+# Copyright (c) 2013, Nucleic Development Team.
+#
+# Distributed under the terms of the Modified BSD License.
+#
+# The full license is in the file COPYING.txt, distributed with this software.
+#------------------------------------------------------------------------------
+from enaml.widgets.api import Window, Container#, Label
+from enamlkv.widgets.api import *
+from enaml.core.looper import Looper
+
+pages = ['Checkboxes','Labels','TextInput','Slider','Switch','Progress','ColorPicker','Tabs','Camera']
+
+enamldef Main(Window):
+    title = "Enaml Kv Examples"
+    BoxLayout:
+        orientation = 'vertical'
+        BoxLayout:
+            height = '30dp' 
+            size_hint_y = None
+            Label:
+                text = "Screen"
+            Spinner:
+                text << "{}".format(scrn_mgr.current)
+                values = pages
+                text :: scrn_mgr.current = self.text  
+                    
+            Button:
+                text = "Prev"
+                state:: 
+                    if self.state=="down":
+                        i = pages.index(scrn_mgr.current)
+                        scrn_mgr.current = pages[(i-1)%len(pages)]
+            Button:
+                text = "Next"
+                state:: 
+                    if self.state=="down":
+                        i = pages.index(scrn_mgr.current)
+                        scrn_mgr.current = pages[(i+1)%len(pages)]
+        ScreenManager: scrn_mgr:
+            Screen:
+                name = "Checkboxes"
+                BoxLayout:
+                    Label:  
+                        text = 'Linked checkboxes:'  
+                    CheckBox:
+                        active:= cb2.active
+                    CheckBox: cb2:
+                        pass
+            Screen:
+                name = "Labels"
+                StackLayout:
+                    Looper:
+                        iterable << range(9)
+                        Label:
+                            text = str(loop_item)
+                            height = '40dp'
+                            size_hint_y = None
+            Screen:
+                name = "TextInput"
+                BoxLayout:
+                    orientation = 'vertical'
+                    Label:
+                        text << "{}".format(text_input.text)
+                    TextInput: text_input:
+                        height = '40dp'
+                        size_hint_y = None
+                        #text = ""
+                        
+            Screen:
+                name = "Slider"
+                BoxLayout:
+                    Label:
+                        text << "{}".format(slider.value)
+                    Slider: slider:
+                        range = (20,100)
+            Screen:
+                name = "Switch"
+                BoxLayout:
+                    Label:
+                        text << "{}".format(switch.active)
+                    Switch: switch:
+                        pass
+            Screen:
+                name = "Progress"
+                BoxLayout:
+                    orientation = "vertical"
+                    Slider: progress:
+                        range = (0,100)
+                    ProgressBar: 
+                        value<<progress.value
+                    Label:
+                        text << "{}%".format(progress.value)
+            Screen:
+                name = "Tabs"
+                TabbedPanel:
+                    do_default_tab = False
+                    Looper:
+                        iterable << range(3)
+                        TabbedPanelItem:
+                            text = "Tab {}".format(loop_item) 
+                            Label:
+                                text = "Content - {}".format(loop_item)
+            Screen:
+                name = "ColorPicker"
+                BoxLayout:
+                    orientation = 'vertical'
+                    Label:
+                        text << "Selected: {}".format(picker.hex_color)
+                    ColorPicker: picker:
+                        pass
+            Screen:
+                name = "Camera"
+                BoxLayout:
+                    orientation = 'vertical'
+                    Camera: camera:
+                        resolution = (640,480)
+                        play = False
+                    ToggleButton:
+                        text << 'Stop' if camera.play else 'Start'
+                        height = '30dp' 
+                        size_hint_y = None
+                        state:: 
+                            if self.state=='down':
+                                camera.play = not camera.play
+                            

@@ -1,0 +1,15 @@
+/__init__.pyc
+/k_deferred_caller.pyc
+/k_resource_helpers.pyc
+/k_single_widget_layout.pyc
+/k_window_base.pyc
+/kv_application.pyc
+/kv_constraints_widget.pyc
+/kv_container.pyc
+/kv_control.pyc
+/kv_factories.pyc
+/kv_frame.pyc
+/kv_mime_data.pyc
+/kv_toolkit_object.pyc
+/kv_widget.pyc
+/kv_window.pyc
