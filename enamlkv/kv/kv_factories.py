@@ -166,7 +166,7 @@ def kivy_enaml_factory(widget_class,read_only_properties=None):
                 try:
                     setattr(self.widget,k,value)
                 except (KeyError,AttributeError) as e:
-                    msg = "Enaml: Could not set {}: {}.".format(k,e)
+                    msg = "Enaml: Could not set {}.{}: {}.".format(self,k,e)
                     if "read-only" in str(e):
                         msg+=" You probably want to add this to the read_only_properties list."
                     log.error(msg)   

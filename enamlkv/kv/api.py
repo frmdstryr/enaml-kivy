@@ -27,7 +27,7 @@ KV_CONTROLS = dict(
     AsyncImage = lambda: get_control('kivy.uix.image.AsyncImage'),
     Slider = lambda: get_control('kivy.uix.slider.Slider'),
     ProgressBar = lambda: get_control('kivy.uix.progressbar.ProgressBar'),
-    TextInput = lambda: get_control('kivy.uix.textinput.TextInput',read_only_properties=['keyboard']),
+    TextInput = lambda: get_control('kivy.uix.textinput.TextInput',read_only_properties=['keyboard','cursor_pos','cursor_col','cursor_row']),
     ToggleButton = lambda: get_control('kivy.uix.togglebutton.ToggleButton'),
     Switch = lambda: get_control('kivy.uix.switch.Switch'),
     Video = lambda: get_control('kivy.uix.video.Video'),
