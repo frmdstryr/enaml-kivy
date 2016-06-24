@@ -11,10 +11,6 @@ from atom.api import Typed
 from enaml.widgets.toolkit_object import ProxyToolkitObject
 
 from kivy.uix.widget import WidgetBase
-from kivy.event import EventDispatcher
-
-#class KvToolkitObjectMeta(type(ProxyToolkitObject),type(EventDispatcher)):
-#    pass 
 
 class KvToolkitObject(ProxyToolkitObject):
     """ A Kv implementation of an Enaml ProxyToolkitObject.
@@ -47,7 +43,6 @@ class KvToolkitObject(ProxyToolkitObject):
         state of the widget. The child widgets will not yet be created.
 
         """
-        print("KvToolkitObject.init_widget({})".format(self))
         widget = self.widget
         if widget is not None:
             # Each Kv object gets a name. If one is not provided by the
@@ -61,7 +56,6 @@ class KvToolkitObject(ProxyToolkitObject):
             parent = self.parent_widget()
             if parent:
                 parent.add_widget(widget)
-            #    print("YO: {}.parent = {}".format(widget,self.parent_widget()))
 
     def init_layout(self):
         """ Initialize the layout of the toolkit widget.
