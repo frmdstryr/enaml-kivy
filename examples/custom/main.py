@@ -5,6 +5,7 @@ from enamlkv.kv.kv_application import KvApplication
 from kivymd.theming import ThemeManager
 
 class EnamlKvApp(KvApplication):
+    __version__ = '1.0'
     def build(self):
         self._kvapp.theme_cls = ThemeManager()
         with enaml.imports():
