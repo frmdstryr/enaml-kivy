@@ -7,15 +7,38 @@
 #------------------------------------------------------------------------------
 import random
 from enaml.widgets.api import Window
-from enamlkv.kv.api import BoxLayout,ScreenManager,Screen,ScrollView
+from enamlkv.kv.api import BoxLayout,ScreenManager,Screen,ScrollView,AnchorLayout,Spacer
 from enaml.core.looper import Looper
 from widgets import *
-from atom.api import Atom,List
+from atom.api import Atom,List,Unicode,Bool,Instance,Int
+
+class FormModel(Atom):
+    name = Unicode("John Doe")
+    street = Unicode("1234 W Apple St.")
+    city = Unicode("Applebottom")
+    state = Unicode("PA")
+    zipcode = Int(12345)
+    available = Bool()
 
 class Model(Atom):
     items = List(default=range(5))
     points = List(default=[(50.6394,3.057),(50.6314,3.057)])
-    screens = List(default = ['ItemList','Map'])
+    screens = List(default = ['ItemList','Form','Map'])
+    form = Instance(FormModel,(),{})
+
+enamldef Form(BoxLayout):
+    orientation='vertical'
+    padding = '24dp'
+    
+enamldef FormLabel(MDLabel):
+    color = [0.1,0.1,0.1,1]
+    size_hint_x = None
+    font_size = '16dp' 
+
+enamldef FormRow(BoxLayout):
+    size_hint_y = None
+    height = '48dp'
+    
 
 enamldef Main(Window):
     title = "KivyMD Examples"
@@ -57,6 +80,63 @@ enamldef Main(Window):
                             tmp = model.items[:]
                             tmp.append(len(tmp))
                             model.items = tmp  
+            Screen:
+                name = 'Form'
+                BoxLayout:
+                    orientation = "vertical"
+                    ScrollView:
+                        Form:
+                            FormRow:
+                                FormLabel:
+                                    text = "Name"
+                                SingleLineTextField:
+                                    text := model.form.name
+                            FormRow:
+                                FormLabel:
+                                    text = "Address"
+                                SingleLineTextField:
+                                    text := model.form.street
+                            FormRow:
+                                FormLabel:
+                                    text = "City"
+                                SingleLineTextField:
+                                    text := model.form.city
+                            FormRow:
+                                FormLabel:
+                                    text = "State"
+                                SingleLineTextField:
+                                    text := model.form.state
+                            FormRow:
+                                FormLabel:
+                                    text = "Zipcode"
+                                SingleLineTextField:
+                                    text << "{}".format(model.form.zipcode)
+                                    text :: model.form.zipcode = int(change['value'])
+                            FormRow:
+                                FormLabel:
+                                    text = "Available"
+                                MDCheckbox:
+                                    active := model.form.available
+                                    width = '48dp'
+                                    size_hint_x = None
+                            
+                            Spacer: # Filler widget to push others to top
+                                pass
+                    
+                    BoxLayout:
+                        padding = '48dp'
+                        MDLabel:
+                            markup = True
+                            color = [0,0,0,1]
+                            text << "[b]Mail to:[/b]\n{name}\n{street}\n{city},{state} {zipcode}\nAvailable: {available}".format(
+                                        # Enaml only detects changes in subproperties if explicitly defined
+                                        name=model.form.name,
+                                        street=model.form.street,
+                                        city=model.form.city,
+                                        state=model.form.state,
+                                        zipcode=model.form.zipcode,
+                                        available=model.form.available and "Yes" or "No")
+                            
             Screen:
                 name = 'Map'
                 MapView: map:

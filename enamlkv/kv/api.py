@@ -18,7 +18,8 @@ KV_CONTROLS = dict(
     AnchorLayout = lambda: get_control('kivy.uix.anchorlayout.AnchorLayout'),
     PageLayout = lambda: get_control('kivy.uix.pagelayout.PageLayout'),
     ScatterLayout = lambda: get_control('kivy.uix.scatterlayout.ScatterLayout'),
-    ScatterPlaneLayout = lambda: get_control('kivy.uix.scatterlayou.ScatterPlaneLayout'),
+    ScatterPlaneLayout = lambda: get_control('kivy.uix.scatterlayout.ScatterPlaneLayout'),
+    Spacer = lambda: get_control('kivy.uix.widget.Widget'),
     
     StackLayout = lambda: get_control('kivy.uix.stacklayout.StackLayout'),
     # Ux Widgets
@@ -56,7 +57,7 @@ KV_CONTROLS = dict(
     
     DropDown = lambda: get_control("kivy.uix.dropdown.DropDown"),
     Spinner = lambda: get_control("kivy.uix.spinner.Spinner"),
-    SpinnerButton = lambda: get_control("kivy.uix.spinner.SpinnerButton"),
+    #SpinnerButton = lambda: get_control("kivy.uix.spinner.SpinnerButton"),
     Splitter = lambda: get_control("kivy.uix.splitter.Splitter"),
     ColorPicker = lambda: get_control("kivy.uix.colorpicker.ColorPicker",read_only_properties=['wheel']),
     
