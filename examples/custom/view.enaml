@@ -120,23 +120,18 @@ enamldef Main(Window):
                                     width = '48dp'
                                     size_hint_x = None
                             
-                            Spacer: # Filler widget to push others to top
-                                pass
-                    
-                    BoxLayout:
-                        padding = '48dp'
-                        MDLabel:
-                            markup = True
-                            color = [0,0,0,1]
-                            text << "[b]Mail to:[/b]\n{name}\n{street}\n{city},{state} {zipcode}\nAvailable: {available}".format(
-                                        # Enaml only detects changes in subproperties if explicitly defined
-                                        name=model.form.name,
-                                        street=model.form.street,
-                                        city=model.form.city,
-                                        state=model.form.state,
-                                        zipcode=model.form.zipcode,
-                                        available=model.form.available and "Yes" or "No")
-                            
+                            MDLabel:
+                                markup = True
+                                color = [0,0,0,1]
+                                text << "[b]Mail to:[/b]\n{name}\n{street}\n{city},{state} {zipcode}\nAvailable: {available}".format(
+                                            # Enaml only detects changes in subproperties if explicitly defined
+                                            name=model.form.name,
+                                            street=model.form.street,
+                                            city=model.form.city,
+                                            state=model.form.state,
+                                            zipcode=model.form.zipcode,
+                                            available=model.form.available and "Yes" or "No")
+                                
             Screen:
                 name = 'Map'
                 MapView: map:
