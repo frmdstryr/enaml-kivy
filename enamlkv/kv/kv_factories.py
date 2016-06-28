@@ -100,7 +100,7 @@ def kivy_enaml_factory(widget_class,read_only_properties=None):
         if cls in [widget_class]:
             continue # Skip self
         elif issubclass(cls,Widget) and not _bases: # Find the first Widget superclass
-            _bases = kivy_enaml_factory(cls)
+            _bases = kivy_enaml_factory(cls,read_only_properties=read_only_properties)
             ProxyControlBase =_bases['proxy']
             ControlBase =_bases['control']
             KvWidgetBase = _bases['widget']
