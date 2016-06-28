@@ -10,7 +10,8 @@ from enaml.widgets.api import Window
 from enamlkv.kv.api import BoxLayout,ScreenManager,Screen,ScrollView,AnchorLayout,Spacer
 from enaml.core.looper import Looper
 from widgets import *
-from atom.api import Atom,List,Unicode,Bool,Instance,Int
+from atom.api import Atom,List,Unicode,Bool,Instance,Int,observe
+from enaml.core.conditional import Conditional
 
 class FormModel(Atom):
     name = Unicode("John Doe")
@@ -19,6 +20,14 @@ class FormModel(Atom):
     state = Unicode("PA")
     zipcode = Int(12345)
     available = Bool()
+    
+    is_valid = Bool()
+    
+    @observe('name','street','city','state','zipcode')
+    def _validate_form(self,change):
+        valid = False not in map(bool,[self.name,self.street,self.city,self.state])
+        zip_valid = len(str(self.zipcode))==5
+        self.is_valid = valid and zip_valid 
 
 class Model(Atom):
     items = List(default=range(5))
@@ -72,13 +81,27 @@ enamldef Main(Window):
                     icon ='plus'
                     size_hint = (None, None)
                     size =("56dp","56dp")
+                    background_color = [0,1,0,1]
                     elevation_normal = 8
-                    pos_hint = {'center_x': 0.9, 'center_y': 0.1}
+                    pos_hint = {'center_x': 0.8, 'center_y': 0.1}
                     state::
                         if self.state=='normal':
                             print("Adding item") 
                             tmp = model.items[:]
                             tmp.append(len(tmp))
+                            model.items = tmp  
+                MDFloatingActionButton:
+                    icon ='minus'
+                    size_hint = (None, None)
+                    size =("56dp","56dp")
+                    elevation_normal = 8
+                    background_color = [1,0,0,1]
+                    pos_hint = {'center_x': 0.9, 'center_y': 0.1}
+                    state::
+                        if self.state=='normal':
+                            print("Remove item") 
+                            tmp = model.items[:]
+                            tmp.pop()
                             model.items = tmp  
             Screen:
                 name = 'Form'
@@ -120,17 +143,27 @@ enamldef Main(Window):
                                     width = '48dp'
                                     size_hint_x = None
                             
-                            MDLabel:
-                                markup = True
-                                color = [0,0,0,1]
-                                text << "[b]Mail to:[/b]\n{name}\n{street}\n{city},{state} {zipcode}\nAvailable: {available}".format(
-                                            # Enaml only detects changes in subproperties if explicitly defined
-                                            name=model.form.name,
-                                            street=model.form.street,
-                                            city=model.form.city,
-                                            state=model.form.state,
-                                            zipcode=model.form.zipcode,
-                                            available=model.form.available and "Yes" or "No")
+                            BoxLayout:
+                                MDLabel:
+                                    markup = True
+                                    color = [0,0,0,1]
+                                    text << "[b]Mail to:[/b]\n{name}\n{street}\n{city},{state} {zipcode}\nAvailable: {available}".format(
+                                                # Enaml only detects changes in subproperties if explicitly defined
+                                                name=model.form.name,
+                                                street=model.form.street,
+                                                city=model.form.city,
+                                                state=model.form.state,
+                                                zipcode=model.form.zipcode,
+                                                available=model.form.available and "Yes" or "No")
+                                
+                                
+                                Conditional:
+                                    condition << model.form.is_valid
+                                    MDFloatingActionButton:
+                                        icon ='check'
+                                        size_hint = (None, None)
+                                        size =("56dp","56dp")
+                                        
                                 
             Screen:
                 name = 'Map'

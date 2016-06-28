@@ -92,7 +92,8 @@ class KvToolkitObject(ProxyToolkitObject):
         """
         widget = self.widget
         if widget is not None:
-            widget.parent = None
+            if widget.parent is not None:
+                widget.parent.remove_widget(widget)
             del self.widget
         super(KvToolkitObject, self).destroy()
 
@@ -105,7 +106,7 @@ class KvToolkitObject(ProxyToolkitObject):
         """
         super(KvToolkitObject, self).child_removed(child)
         if child.widget is not None:
-            child.widget.parent = None
+            self.widget.remove_widget(child.widget)
 
     #--------------------------------------------------------------------------
     # Public API
