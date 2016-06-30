@@ -20,6 +20,8 @@ import logging
 
 log = logging.getLogger("kivy")
 
+from functools import partial
+
 from atom.api import Event,Instance,Typed,observe
 
 from enaml.core.declarative import d_
@@ -45,6 +47,12 @@ KV_FACTORIES = {
     'Window': window_factory,
 }
 
+class partialmethod(partial):
+    def __get__(self, instance, owner):
+        if instance is None:
+            return self
+        return partial(self.func, instance,*(self.args or ()), **(self.keywords or {}))
+
 def get_proxy(dotted_widget_name):
     """ Helper to get the enaml Proxy class for a given Kivy widget. 
     
@@ -69,7 +77,7 @@ def get_factory(dotted_widget_name):
     """
     return lambda:kivy_enaml_factory(pydoc.locate(dotted_widget_name))['widget']
 
-def kivy_enaml_factory(widget_class,read_only_properties=None):
+def kivy_enaml_factory(widget_class,read_only_properties=None,widget_events=None):
     """ Generates the Enaml Control, Proxy, and Implementation classes for
     given Kivy widget so that it be used in an enaml file.
     
@@ -80,6 +88,7 @@ def kivy_enaml_factory(widget_class,read_only_properties=None):
     assert inspect.isclass(widget_class) and issubclass(widget_class, Widget), "Invalid widget class {}".format(widget_class)
     
     read_only_properties = read_only_properties or []
+    widget_events = widget_events or []
     
     # Try to load from cache
     if widget_class in _CACHE:
@@ -95,8 +104,9 @@ def kivy_enaml_factory(widget_class,read_only_properties=None):
     _bases = None
     base_classes = inspect.getmro(widget_class)
     behavior_properties = {}
-    behavior_events = []
     for cls in base_classes:
+        if hasattr(cls,'__events__'):
+            widget_events.extend(widget_class.__events__)
         if cls in [widget_class]:
             continue # Skip self
         elif issubclass(cls,Widget) and not _bases: # Find the first Widget superclass
@@ -105,16 +115,14 @@ def kivy_enaml_factory(widget_class,read_only_properties=None):
             ControlBase =_bases['control']
             KvWidgetBase = _bases['widget']
         # TODO: Handle behaviors
-        elif cls in _BEHAVIOR_MIXINS:
-            for bcls in inspect.getmro(cls):
-                behavior_properties.update(bcls.__dict__.copy())
-                if bcls in _BEHAVIOR_EVENTS:
-                    behavior_events.extend(_BEHAVIOR_EVENTS[bcls])
+        else:
+            
+            behavior_properties.update(cls.__dict__.copy())
+            if cls in _BEHAVIOR_EVENTS:
+                widget_events.extend(_BEHAVIOR_EVENTS[cls])
     
     widget_name = widget_class.__name__
-    widget_events = behavior_events
-    if hasattr(widget_class,'__events__'):
-        widget_events.extend(widget_class.__events__)
+    
     widget_events = list(set(widget_events)) # Make unique
         
     log.debug("Enaml:Generating enaml classes for {}".format(widget_name))
@@ -146,11 +154,7 @@ def kivy_enaml_factory(widget_class,read_only_properties=None):
             default_value = (p.defaultvalue for p in v.defaultvalue)
             default_property_values[k] = default_value
             control_properties[k] = d_(Instance((list,tuple),factory=lambda default_value=default_value:default_value),writable=is_writable)
-        #elif isinstance(v,properties.AliasProperty):# and (hasattr(v,'allownone') and v.allownone==1):
-        #    # Let type checking be done by Kivy Properties
-        #    control_properties[k] = d_(Instance(object,factory=lambda v=v:v.defaultvalue),writable=False)
-        #    read_only_properties.append(k)
-        elif isinstance(v,properties.Property):# and (hasattr(v,'allownone') and v.allownone==1):
+        elif isinstance(v,properties.Property):
             # Let type checking be done by Kivy Properties
             default_value = v.defaultvalue
             default_property_values[k] = default_value
@@ -198,19 +202,19 @@ def kivy_enaml_factory(widget_class,read_only_properties=None):
     def _update_proxy(self, change):
         ControlBase._update_proxy(self,change)
 
-    control_properties['proxy']=Typed(ProxyWidgetControl)
+    control_properties['proxy'] = Typed(ProxyWidgetControl)
     control_properties['_update_proxy'] = _update_proxy  
     WidgetControl = type(widget_name,(ControlBase,),control_properties)
     log.debug("Enaml:        Created control {} from {}".format(WidgetControl,control_properties))
     
     # Create the Enaml ToolkitObject for this widget
     def create_widget(self):
-        #log.verbose("{}.create_widget()".format(self))
+        #log.debug("{}.create_widget()".format(self))
         self.widget = widget_class()
     
     def init_widget(self):
         """ Set initial values and connect signals"""
-        #log.verbose("{}.init_widget()".format(KvWidgetBase))
+        #log.debug("{}.init_widget()".format(KvWidgetBase))
         KvWidgetBase.init_widget(self)
         d = self.declaration
         
@@ -231,14 +235,14 @@ def kivy_enaml_factory(widget_class,read_only_properties=None):
             # Bind observers
             handler = getattr(self,"on_{}".format(p))
             binding = {p:handler}
-            #log.verbose("Enaml: {}.bind({})".format(self.widget,binding))
+            #log.debug("Enaml: {}.bind({})".format(self.widget,binding))
             self.widget.bind(**binding)
         
         # Connect signals so callbacks get handled by Enaml events
         for on_event in widget_events:
             handler = getattr(self,on_event)
             binding = {on_event:handler}
-            #log.verbose("Enaml: {}.bind({})".format(self.widget,binding))
+            #log.info("Enaml: {}.bind({})".format(self.widget,binding))
             self.widget.bind(**binding)
 
     
@@ -253,13 +257,13 @@ def kivy_enaml_factory(widget_class,read_only_properties=None):
         def on_event(self,*args,**kwargs):
             d = self.declaration
             name = kwargs.pop('__event__')
-            #log.verbose("Enaml: {}.{}({})".format(self,name,args))
+            #log.debug("Enaml: {}.{}({})".format(self,name,args))
             event = getattr(d,name)
             #TODO: Is state already in sync?
             # Trigger enaml event
             event(args) # this doesnt do anything???
             
-        widget_properties[e] = lambda self,*args:on_event(self,*args,__event__=e)
+        widget_properties[e] = partialmethod(on_event,__event__=e)
     
     #: Create the Kivy implementation of this Enaml proxy widget
     
