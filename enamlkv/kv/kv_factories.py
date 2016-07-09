@@ -179,7 +179,8 @@ def kivy_enaml_factory(widget_class,read_only_properties=None,widget_events=None
             # Read changes from widget to Enaml    
             def on_property(self,instance,value,k=k):
                 #log.info("Enaml: {}.on_{}({},{})".format(self,k,instance,value))
-                setattr(self.declaration,k,getattr(self.widget,k))
+                if self.declaration and self.widget:
+                    setattr(self.declaration,k,getattr(self.widget,k))
             
             if is_writable:
                 proxy_properties["set_{}".format(k)] = set_property
@@ -230,7 +231,7 @@ def kivy_enaml_factory(widget_class,read_only_properties=None,widget_events=None
                         handler = getattr(self,'set_{}'.format(p))
                         handler(value)
                 except TypeError as e:
-                    log.warn("Enaml: Failed to set initial value for {} on {}. Reason: {}".format(p,self,e))
+                    log.debug("Enaml: Failed to set initial value for {} on {}. Reason: {}".format(p,self,e))
             
             # Bind observers
             handler = getattr(self,"on_{}".format(p))
