@@ -99,7 +99,7 @@ KV_CONTROLS = dict(
     RstDefinitionSpace = lambda: get_control("kivy.uix.rst.RstDefinitionSpace"),
     
     Sandbox = lambda: get_control("kivy.uix.sandbox.Sandbox"),
-    Scatter = lambda: get_control("kivy.uix.scatter.Scatter"),
+    Scatter = lambda: get_control("kivy.uix.scatter.Scatter",read_only_properties=['bbox']),
     ScatterPlane = lambda: get_control("kivy.uix.scatter.ScatterPlane"),
     
     Settings = lambda: get_control("kivy.uix.settings.Settings"),
