@@ -22,7 +22,7 @@ log = logging.getLogger("kivy")
 
 from functools import partial
 
-from atom.api import Event,Instance,Typed,observe
+from atom.api import Event,Instance,Value,Typed,observe
 
 from enaml.core.declarative import d_
 from enaml.widgets.control import Control, ProxyControl
@@ -158,7 +158,7 @@ def kivy_enaml_factory(widget_class,read_only_properties=None,widget_events=None
             # Let type checking be done by Kivy Properties
             default_value = v.defaultvalue
             default_property_values[k] = default_value
-            control_properties[k] = d_(Instance(object,factory=lambda default_value=default_value:default_value),writable=is_writable)
+            control_properties[k] = d_(Value(factory=lambda default_value=default_value:default_value),writable=is_writable)
             
         # Create setter method for this property
         if (k in control_properties) and (k not in widget_events) and (k not in excluded_properties) and (not k.startswith("_")):
@@ -257,6 +257,8 @@ def kivy_enaml_factory(widget_class,read_only_properties=None,widget_events=None
     for e in widget_events:
         def on_event(self,*args,**kwargs):
             d = self.declaration
+            if d is None:
+                return # Already destroyed
             name = kwargs.pop('__event__')
             #log.debug("Enaml: {}.{}({})".format(self,name,args))
             event = getattr(d,name)
