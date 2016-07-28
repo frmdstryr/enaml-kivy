@@ -142,10 +142,6 @@ def kivy_enaml_factory(widget_class,read_only_properties=None,widget_events=None
     # And behavior properties
     kivy_properties.update(behavior_properties)
     
-    # This is used to prevent feedback loops when one property 
-    # updates another property that updates the original property (creating a loop)
-    guarded_properties = set()
-    
     for k,v in kivy_properties.items():
         is_writable = k not in read_only_properties
         if k in excluded_properties:
@@ -210,6 +206,9 @@ def kivy_enaml_factory(widget_class,read_only_properties=None,widget_events=None
     log.debug("Enaml:    Properties: {}".format(observed_properties))
     
     proxy_properties['declaration'] = Instance(Control)
+    
+    # This is used to prevent feedback loops when one property 
+    # updates another property that updates the original property (creating a loop)
     proxy_properties['_guards'] = Typed(set,())    
     
     # Create the Proxy that defines what the implementation must implement
@@ -222,9 +221,17 @@ def kivy_enaml_factory(widget_class,read_only_properties=None,widget_events=None
     @observe(*observed_properties)
     def _update_proxy(self, change):
         ControlBase._update_proxy(self,change)
+        
+    def __getattr__(self,name):
+        """ Attempt to map function calls on the declaration to  
+            the Kivy proxy widget so you don't have to use 
+            self.proxy.widget.<method>() all the time
+        """
+        return getattr(self.proxy.widget,name)
 
     control_properties['proxy'] = Typed(ProxyWidgetControl)
-    control_properties['_update_proxy'] = _update_proxy  
+    control_properties['_update_proxy'] = _update_proxy
+    control_properties['__getattr__'] = __getattr__    
     WidgetControl = type(widget_name,(ControlBase,),control_properties)
     log.debug("Enaml:        Created control {} from {}".format(WidgetControl,control_properties))
     
