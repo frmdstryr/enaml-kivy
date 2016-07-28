@@ -142,6 +142,9 @@ def kivy_enaml_factory(widget_class,read_only_properties=None,widget_events=None
     # And behavior properties
     kivy_properties.update(behavior_properties)
     
+    # This is used to prevent feedback loops when one property 
+    # updates another property that updates the original property (creating a loop)
+    guarded_properties = set()
     
     for k,v in kivy_properties.items():
         is_writable = k not in read_only_properties
@@ -164,23 +167,39 @@ def kivy_enaml_factory(widget_class,read_only_properties=None,widget_events=None
         if (k in control_properties) and (k not in widget_events) and (k not in excluded_properties) and (not k.startswith("_")):
             observed_properties.append(k)
             
+            # TODO: Feedback loops are issues!
+            
             # Write changes from Enaml to widget
             def set_property(self,value,k=k):
+                
                 #log.info("Enaml: {}.set_{}({})".format(self,k,value))
-                try:
-                    setattr(self.widget,k,value)
-                except (KeyError,AttributeError) as e:
-                    msg = "Enaml: Could not set {}.{}: {}.".format(self,k,e)
-                    if "read-only" in str(e):
-                        msg+=" You probably want to add this to the read_only_properties list."
-                    log.error(msg)   
-                    #raise
+                key = (self,k)
+                guards = self._guards
+                if key not in guards:
+                    guards.add(key)
+                    try:
+                        setattr(self.widget,k,value)
+                    except (KeyError,AttributeError) as e:
+                        msg = "Enaml: Could not set {}.{}: {}.".format(self,k,e)
+                        if "read-only" in str(e):
+                            msg+=" You probably want to add this to the read_only_properties list."
+                        log.error(msg)   
+                    finally:
+                        guards.remove(key)
+                        #raise
             
             # Read changes from widget to Enaml    
             def on_property(self,instance,value,k=k):
                 #log.info("Enaml: {}.on_{}({},{})".format(self,k,instance,value))
                 if self.declaration and self.widget:
-                    setattr(self.declaration,k,getattr(self.widget,k))
+                    key = (self,k)
+                    guards = self._guards
+                    if key not in guards:
+                        guards.add(key)
+                        try:
+                            setattr(self.declaration,k,getattr(self.widget,k))
+                        finally:
+                            guards.remove(key)
             
             if is_writable:
                 proxy_properties["set_{}".format(k)] = set_property
@@ -190,7 +209,8 @@ def kivy_enaml_factory(widget_class,read_only_properties=None,widget_events=None
     log.debug("Enaml:    Events: {}".format(widget_events))
     log.debug("Enaml:    Properties: {}".format(observed_properties))
     
-    proxy_properties['declaration'] = Instance(Control)    
+    proxy_properties['declaration'] = Instance(Control)
+    proxy_properties['_guards'] = Typed(set,())    
     
     # Create the Proxy that defines what the implementation must implement
     ProxyWidgetControl = type("Proxy{}".format(widget_name),(ProxyControlBase,),proxy_properties)

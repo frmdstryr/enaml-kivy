@@ -1,0 +1,97 @@
+#------------------------------------------------------------------------------
+# Copyright (c) 2016, frmdstryr.
+#
+# Distributed under the terms of the MIT License.
+#
+# The full license is in the file LICENSE, distributed with this software.
+#------------------------------------------------------------------------------
+import random
+from enaml.widgets.api import Window
+from enamlkv.kv.api import BoxLayout,ScreenManager,Screen,ScrollView,AnchorLayout,Spacer,FloatLayout
+from enaml.core.looper import Looper
+from widgets import *
+from atom.api import Atom,ContainerList,List,Unicode,Bool,Instance,Int,observe
+from enaml.core.conditional import Conditional
+
+class Model(Atom):
+    items = ContainerList(default=range(10))
+    screens = List(default = ['ItemList','Form','Map'])
+
+
+enamldef Cards(BoxLayout):
+    attr card_model
+    orientation = 'vertical'
+    padding = '8dp'
+    spacing = '8dp'
+    Looper:
+        iterable << card_model and card_model.items or []
+        MDCard:
+            size_hint_y = None
+            height = '64dp'
+            padding = '8dp'
+            MDLabel:
+                text << "Card {}".format(loop_item)
+                theme_text_color = "Primary"
+    Spacer:
+        pass
+                
+enamldef PhoneLayout(FloatLayout):
+    attr model
+    NavigationDrawer: nav_drawer:
+        title = "Screen"
+        Looper:
+            iterable << model.screens
+            NavigationDrawerIconButton:
+                icon = 'circle'
+                text = "{}".format(loop_item)
+                state:: 
+                    if self.state=='normal':
+                        scr_mgr.current = loop_item
+    BoxLayout:
+        orientation = 'vertical'
+        Toolbar:
+            title = "Phone Layout"
+            left_action_items =  [('menu', lambda x,d=nav_drawer.proxy.widget: d.toggle())]
+        
+        ScrollView:
+            Cards:
+                card_model << model
+
+
+enamldef TabletLayout(FloatLayout):
+    attr model
+    BoxLayout:
+        orientation = 'vertical'
+        Toolbar:
+            title = "Tablet Layout"
+            #left_action_items =  [('menu', lambda x,d=nav_drawer.proxy.widget: d.toggle())]
+        BoxLayout:
+            ScrollView:
+                MDList:
+                    Looper:
+                        iterable << model.screens
+                        OneLineListItem:
+                            text << loop_item
+            ScrollView:
+                Cards:
+                    card_model << model
+
+
+
+
+enamldef Main(Window):
+    """ This example shows one way you can do layouts dynamically 
+    when the window is resized.
+    """
+    title = "KivyMD Examples"
+    attr main_model = Model()
+    BoxLayout: window:
+        Conditional:
+            condition << window.width<=480
+            PhoneLayout:
+                model << main_model
+        Conditional:
+            condition << window.width>480
+            TabletLayout:
+                model << main_model  
+    
