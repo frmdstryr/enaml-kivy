@@ -68,8 +68,8 @@ def get_control(dotted_widget_name,read_only_properties=None):
     """
     log.info("Enaml: Creating control for {}".format(dotted_widget_name))
     read_only_properties = read_only_properties or []
-    widget_name = dotted_widget_name.split('.')[-1]
-    return kivy_enaml_factory(pydoc.locate(dotted_widget_name),read_only_properties=read_only_properties)['control']
+    widget_class = pydoc.locate(dotted_widget_name) if isinstance(dotted_widget_name,basestring) else dotted_widget_name
+    return kivy_enaml_factory(widget_class,read_only_properties=read_only_properties)['control']
 
 def get_factory(dotted_widget_name):
     """ Helper to get the enaml widget factory class for a given Kivy widget. 

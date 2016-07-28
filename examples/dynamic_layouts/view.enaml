@@ -7,31 +7,72 @@
 #------------------------------------------------------------------------------
 import random
 from enaml.widgets.api import Window
-from enamlkv.kv.api import BoxLayout,ScreenManager,Screen,ScrollView,AnchorLayout,Spacer,FloatLayout
+from enamlkv.kv.api import BoxLayout,ScreenManager,Screen,ScrollView,AnchorLayout,Spacer,FloatLayout,StackLayout
 from enaml.core.looper import Looper
 from widgets import *
 from atom.api import Atom,ContainerList,List,Unicode,Bool,Instance,Int,observe
 from enaml.core.conditional import Conditional
+import math
 
 class Model(Atom):
     items = ContainerList(default=range(10))
     screens = List(default = ['ItemList','Form','Map'])
 
-
-enamldef Cards(BoxLayout):
+enamldef Cards(StackLayout): layout:
     attr card_model
-    orientation = 'vertical'
+    attr card_min_width = 300
+    orientation = 'lr-tb'
     padding = '8dp'
-    spacing = '8dp'
+    spacing = '12dp'
     Looper:
         iterable << card_model and card_model.items or []
         MDCard:
+            elevation = 0
             size_hint_y = None
-            height = '64dp'
+            orientation = 'vertical'
+            spacing = '4dp'
+            # Dynamically set the width based on available size 
+            size_hint_x << 1/float(max(1.0,round(layout.width/card_min_width)))
+            height = '320dp'
             padding = '8dp'
+            
             MDLabel:
+                size_hint_y = None
+                height='32dp'
                 text << "Card {}".format(loop_item)
+                theme_text_color = "Secondary"
+                font_style = 'Subhead'
+
+            MDLabel:
+                size_hint_y = None
+                height='16dp'
+                text << "Layout width: {} Row ratio: {}".format(layout.width, layout.width/card_min_width)
                 theme_text_color = "Primary"
+                
+            Graph:
+                xlabel='X'
+                ylabel='Y'
+                x_ticks_minor=5
+                x_ticks_major=25
+                y_ticks_major=1
+                y_grid_label=True
+                x_grid_label=True
+                #background_color = 
+                padding=5
+                x_grid=True
+                y_grid=True
+                xmin=-0
+                xmax=100
+                ymin=-1
+                ymax=1
+                label_options=dict(
+                    color=[0,0,0,1]
+                )
+                MeshLinePlot:
+                    points = [(x, math.sin(x / 10.)) for x in range(0, 101)]
+                    color = [0,1,0,1]
+            
+           
     Spacer:
         pass
                 
@@ -55,8 +96,9 @@ enamldef PhoneLayout(FloatLayout):
         
         ScrollView:
             Cards:
+                #height = self.minimum_height
                 card_model << model
-
+        
 
 enamldef TabletLayout(FloatLayout):
     attr model
@@ -66,17 +108,19 @@ enamldef TabletLayout(FloatLayout):
             title = "Tablet Layout"
             #left_action_items =  [('menu', lambda x,d=nav_drawer.proxy.widget: d.toggle())]
         BoxLayout:
-            ScrollView:
-                MDList:
-                    Looper:
-                        iterable << model.screens
-                        OneLineListItem:
-                            text << loop_item
-            ScrollView:
-                Cards:
-                    card_model << model
-
-
+            MDCard:
+                elevation = 0
+                border_radius = 0
+                width = '240dp'
+                size_hint_x = None
+                ScrollView:
+                    MDList:
+                        Looper:
+                            iterable << model.screens
+                            OneLineListItem:
+                                text << loop_item
+            Cards:
+                card_model << model
 
 
 enamldef Main(Window):
