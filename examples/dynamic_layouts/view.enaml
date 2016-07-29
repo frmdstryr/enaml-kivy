@@ -71,7 +71,7 @@ enamldef Cards(StackLayout): root:
     height << root.minimum_height
     Looper:
         iterable << card_model and card_model.items or []
-        FloatingCard:
+        FloatingCard: card:
             layout = root
             CardHeader:
                 text << "Card {}".format(loop_item)
@@ -108,7 +108,7 @@ enamldef Cards(StackLayout): root:
                         color=[0,0,0,1]
                     )
                     MeshLinePlot:
-                        points = [(x, math.cos(x / 10.)) for x in range(0, 101)]
+                        points = [(x, math.cos(x / 10.) if loop_index & 1==0 else math.sin(2*x/10.0)) for x in range(0, 101)]
                         color = [0,1,0,1]
             
                
