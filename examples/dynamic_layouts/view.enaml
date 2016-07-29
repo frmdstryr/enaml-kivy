@@ -13,68 +13,105 @@ from widgets import *
 from atom.api import Atom,ContainerList,List,Unicode,Bool,Instance,Int,observe
 from enaml.core.conditional import Conditional
 import math
+from kivymd.icon_definitions import md_icons
 
 class Model(Atom):
-    items = ContainerList(default=range(10))
+    items = ContainerList(default=range(16))
     screens = List(default = ['ItemList','Form','Map'])
+    
+enamldef FloatingCard(MDCard):
+    attr layout
+    attr min_width = 200
+    elevation = 0
+    size_hint_y = None
+    orientation = 'vertical'
+    spacing = '4dp'
+    border_radius = 0
+    border_color_a = 0.05
+    # Dynamically set the width based on available size 
+    size_hint_x << 1/float(max(1.0,round(layout.width/(min_width*2))))
+    height = '240dp'
+    #padding = '8dp'
+    
+enamldef CardHeader(BoxLayout):
+    orientation = 'vertical'
+    alias text: label.text
+    size_hint_y = None
+    height='36dp'
+    
+    MDSeparator:
+        height = '3dp'
+            
+    BoxLayout:
+        padding = '8dp'
+        size_hint_y = None
+        height='32dp'
+        MDLabel: label:
+            theme_text_color = "Secondary"
+            font_style = 'Body2'
+    
+        MDLabel:
+            size_hint_x = None
+            width = '16dp'
+            font_style = 'Icon'
+            theme_text_color = "Secondary"
+            text = md_icons['chevron-up']
+            halign = 'right'
+        
+    MDSeparator:
+        pass
 
-enamldef Cards(StackLayout): layout:
+enamldef Cards(StackLayout): root:
     attr card_model
-    attr card_min_width = 300
+    attr card_min_width = 200
     orientation = 'lr-tb'
     padding = '8dp'
     spacing = '12dp'
+    size_hint_y = None
+    height << root.minimum_height
     Looper:
         iterable << card_model and card_model.items or []
-        MDCard:
-            elevation = 0
-            size_hint_y = None
-            orientation = 'vertical'
-            spacing = '4dp'
-            # Dynamically set the width based on available size 
-            size_hint_x << 1/float(max(1.0,round(layout.width/card_min_width)))
-            height = '320dp'
-            padding = '8dp'
-            
-            MDLabel:
-                size_hint_y = None
-                height='32dp'
+        FloatingCard:
+            layout = root
+            CardHeader:
                 text << "Card {}".format(loop_item)
-                theme_text_color = "Secondary"
-                font_style = 'Subhead'
-
-            MDLabel:
-                size_hint_y = None
-                height='16dp'
-                text << "Layout width: {} Row ratio: {}".format(layout.width, layout.width/card_min_width)
-                theme_text_color = "Primary"
-                
-            Graph:
-                xlabel='X'
-                ylabel='Y'
-                x_ticks_minor=5
-                x_ticks_major=25
-                y_ticks_major=1
-                y_grid_label=True
-                x_grid_label=True
-                #background_color = 
-                padding=5
-                x_grid=True
-                y_grid=True
-                xmin=-0
-                xmax=100
-                ymin=-1
-                ymax=1
-                label_options=dict(
-                    color=[0,0,0,1]
-                )
-                MeshLinePlot:
-                    points = [(x, math.sin(x / 10.)) for x in range(0, 101)]
-                    color = [0,1,0,1]
             
-           
-    Spacer:
-        pass
+            BoxLayout:
+                padding = '8dp'
+                orientation = 'vertical'
+                MDLabel:
+                    size_hint_y = None
+                    height='16dp'
+                    text << "Layout size: {}".format(layout.width,layout.height)
+                    theme_text_color = "Primary"
+                
+                #BoxLayout: wrapper:
+                Graph:
+                    #xlabel='X'
+                    #ylabel='Y'
+                    #size << wrapper.size
+                    x_ticks_minor=5
+                    x_ticks_major=25
+                    y_ticks_major=1
+                    y_grid_label=True
+                    x_grid_label=True
+                    #background_color = 
+                    
+                    padding=5
+                    x_grid=True
+                    y_grid=True
+                    xmin=-0
+                    xmax=100
+                    ymin=-1
+                    ymax=1
+                    label_options=dict(
+                        color=[0,0,0,1]
+                    )
+                    MeshLinePlot:
+                        points = [(x, math.cos(x / 10.)) for x in range(0, 101)]
+                        color = [0,1,0,1]
+            
+               
                 
 enamldef PhoneLayout(FloatLayout):
     attr model
@@ -85,9 +122,7 @@ enamldef PhoneLayout(FloatLayout):
             NavigationDrawerIconButton:
                 icon = 'circle'
                 text = "{}".format(loop_item)
-                state:: 
-                    if self.state=='normal':
-                        scr_mgr.current = loop_item
+                on_press:: scr_mgr.current = loop_item
     BoxLayout:
         orientation = 'vertical'
         Toolbar:
@@ -96,7 +131,6 @@ enamldef PhoneLayout(FloatLayout):
         
         ScrollView:
             Cards:
-                #height = self.minimum_height
                 card_model << model
         
 
@@ -119,8 +153,9 @@ enamldef TabletLayout(FloatLayout):
                             iterable << model.screens
                             OneLineListItem:
                                 text << loop_item
-            Cards:
-                card_model << model
+            ScrollView:
+                Cards:
+                    card_model << model
 
 
 enamldef Main(Window):
