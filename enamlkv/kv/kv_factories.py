@@ -239,6 +239,18 @@ def kivy_enaml_factory(widget_class,read_only_properties=None,widget_events=None
     def create_widget(self):
         #log.debug("{}.create_widget()".format(self))
         self.widget = widget_class()
+        
+        # Sync initial state of any properties NOT set in enaml
+        d = self.declaration
+        for p in observed_properties:
+            try:
+                value = getattr(d,p)
+                if value==default_property_values[p]:
+                    # Load initial state
+                    setattr(d,p,getattr(self.widget,p))
+            except TypeError as e:
+                log.debug("Enaml: Failed to sync initial value for {} on {}. Reason: {}".format(p,self,e))
+
     
     def init_widget(self):
         """ Set initial values and connect signals"""
@@ -257,6 +269,7 @@ def kivy_enaml_factory(widget_class,read_only_properties=None,widget_events=None
                     if value!=default_property_values[p]:
                         handler = getattr(self,'set_{}'.format(p))
                         handler(value)
+                        
                 except TypeError as e:
                     log.debug("Enaml: Failed to set initial value for {} on {}. Reason: {}".format(p,self,e))
             
@@ -265,7 +278,7 @@ def kivy_enaml_factory(widget_class,read_only_properties=None,widget_events=None
             binding = {p:handler}
             #log.debug("Enaml: {}.bind({})".format(self.widget,binding))
             self.widget.bind(**binding)
-        
+            
         # Connect signals so callbacks get handled by Enaml events
         for on_event in widget_events:
             handler = getattr(self,on_event)

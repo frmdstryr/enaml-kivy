@@ -50,7 +50,7 @@ KV_CONTROLS = dict(
     ActionView = lambda: get_control("kivy.uix.actionbar.ActionView"),
     ActionPrevious = lambda: get_control("kivy.uix.actionbar.ActionPrevious"),
     
-    ScreenManager = lambda: get_control("kivy.uix.screenmanager.ScreenManager"),
+    ScreenManager = lambda: get_control("kivy.uix.screenmanager.ScreenManager",read_only_properties=['screen_names']),
     Screen = lambda: get_control("kivy.uix.screenmanager.Screen"),
     
     CodeInput = lambda: get_control("kivy.uix.codeinput.CodeInput"),
@@ -69,7 +69,7 @@ KV_CONTROLS = dict(
     TabbedPanelItem = lambda: get_control("kivy.uix.tabbedpanel.TabbedPanelItem"),
     TabbedPanelStrip = lambda: get_control("kivy.uix.tabbedpanel.TabbedPanelStrip"),
     
-    ScrollView = lambda: get_control("kivy.uix.scrollview.ScrollView",read_only_properties=['vbar','bbox']),
+    ScrollView = lambda: get_control("kivy.uix.scrollview.ScrollView",read_only_properties=['hbar','vbar','bbox']),
     
     RstDocument = lambda: get_control("kivy.uix.rst.RstDocument"),
     RstVideoPlayer = lambda: get_control("kivy.uix.rst.RstVideoPlayer"),
