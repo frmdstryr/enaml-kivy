@@ -124,7 +124,7 @@ KV_CONTROLS = dict(
     MenuSidebar = lambda: get_control("kivy.uix.settings.MenuSidebar"),
     SettingSidebarLabel = lambda: get_control("kivy.uix.settings.SettingSidebarLabel"),
     
-    
+    StencilView = lambda: get_control("kivy.uix.stencilview.StencilView"),
     VKeyboard = lambda: get_control("kivy.uix.vkeyboard.VKeyboard"),
 )
 
