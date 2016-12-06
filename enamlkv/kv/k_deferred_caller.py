@@ -15,7 +15,7 @@ def deferredCall(callback, *args, **kwargs):
     This should only be called after the Clock is created.
 
     """
-    Clock.schedule_once(lambda: callback(*args, **kwargs))
+    Clock.schedule_once(lambda dt,args=args,kwargs=kwargs:callback(*args, **kwargs))
 
 
 def timedCall(ms, callback, *args, **kwargs):
@@ -24,4 +24,4 @@ def timedCall(ms, callback, *args, **kwargs):
     This should only be called after the Clock is created.
 
     """
-    Clock.schedule_once(lambda: callback(*args, **kwargs),ms/1000.0)
+    Clock.schedule_once(lambda dt,args=args,kwargs=kwargs:callback(*args, **kwargs),ms/1000.0)
