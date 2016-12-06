@@ -16,7 +16,7 @@ Create enaml Controls for each Kivy widget
 import pydoc
 import inspect
 import logging
-import os
+#import os
 log = logging.getLogger("kivy")
 
 from functools import partial
@@ -25,7 +25,7 @@ from atom.api import Event,Instance,Value,Typed,observe
 
 from enaml.core.declarative import d_
 from enaml.widgets.control import Control, ProxyControl
-from enaml.application import timed_call
+#from enaml.application import timed_call
 
 from kivy.uix.widget import Widget
 from kivy.uix import behaviors
@@ -38,34 +38,35 @@ _BEHAVIOR_MIXINS = [c for n,c in inspect.getmembers(behaviors,inspect.isclass)]
 _BEHAVIOR_EVENTS = {behaviors.ButtonBehavior:['on_press','on_release']}
 _CACHE_FILE = 'enaml-kivy.cache'
 
-def _load_cache():
-    try:
-        import jsonpickle as pickle
-        with open(_CACHE_FILE,'rb') as f:
-            cache = pickle.loads(f.read())
-        log.debug("Loaded enaml-kivy widgets from cache")
-        _CACHE.update(cache)
-    except Exception as e:
-        log.warn("Error loading enaml-kivy widgets from cache | {}".format(e))
-    finally:
-        _CACHE['loaded'] = True
-
-def _save_cache():
-    """ Save the loaded classes into the cache file
-        of them have been imported.
-    """ 
-    _CACHE['updates'] -=1 
-    if _CACHE['updates']!=0:
-        return
-    try:
-        import jsonpickle as pickle
-        with open(_CACHE_FILE,'wb') as f:
-            f.write(pickle.dumps(_CACHE))
-        log.debug("Updated enaml-kivy widget cache")
-    except ImportError as e:
-        pass
-    except Exception as e:
-        log.warn("Error updating enaml-kivy widgets cache | {}".format(e))
+#: My tests show this is slower than not caching...
+# def _load_cache():
+#     try:
+#         import jsonpickle as pickle
+#         with open(_CACHE_FILE,'rb') as f:
+#             cache = pickle.loads(f.read())
+#         log.debug("Loaded enaml-kivy widgets from cache")
+#         _CACHE.update(cache)
+#     except Exception as e:
+#         log.warn("Error loading enaml-kivy widgets from cache | {}".format(e))
+#     finally:
+#         _CACHE['loaded'] = True
+# 
+# def _save_cache():
+#     """ Save the loaded classes into the cache file
+#         of them have been imported.
+#     """ 
+#     _CACHE['updates'] -=1 
+#     if _CACHE['updates']!=0:
+#         return
+#     try:
+#         import jsonpickle as pickle
+#         with open(_CACHE_FILE,'wb') as f:
+#             f.write(pickle.dumps(_CACHE))
+#         log.debug("Updated enaml-kivy widget cache")
+#     except ImportError as e:
+#         pass
+#     except Exception as e:
+#         log.warn("Error updating enaml-kivy widgets cache | {}".format(e))
 
 # Manually implemented factories
 def window_factory():
@@ -96,8 +97,8 @@ def get_control(dotted_widget_name,read_only_properties=None):
     Only actually loads the widget if it is needed. 
     
     """
-    if not _CACHE['loaded']:
-        _load_cache()
+    #if not _CACHE['loaded']:
+    #    _load_cache()
     log.info("Enaml: Creating control for {}".format(dotted_widget_name))
     read_only_properties = read_only_properties or []
     widget_class = pydoc.locate(dotted_widget_name) if isinstance(dotted_widget_name,basestring) else dotted_widget_name
@@ -123,10 +124,10 @@ def kivy_enaml_factory(widget_class,read_only_properties=None,widget_events=None
     widget_events = widget_events or []
     
     # Get file updated time
-    _updated_time = os.path.getmtime(inspect.getfile(widget_class))
+    #_updated_time = os.path.getmtime(inspect.getfile(widget_class))
     
     # Try to load from cache
-    if widget_class in _CACHE and _CACHE[widget_class]['updated']==_updated_time:
+    if widget_class in _CACHE:# and _CACHE[widget_class]['updated']==_updated_time:
         log.info("Enaml: Loaded {} from cache".format(widget_class))
         return _CACHE[widget_class]
     
@@ -354,12 +355,12 @@ def kivy_enaml_factory(widget_class,read_only_properties=None,widget_events=None
         'control':WidgetControl,
         'proxy':ProxyWidgetControl,
         'widget':KvWidgetImpl,
-        'updated': _updated_time,
+    #    'updated': _updated_time,
     }
     
     # Save the cache
-    _CACHE['updates'] +=1
-    timed_call(1000,_save_cache)
+    #_CACHE['updates'] +=1
+    #timed_call(1000,_save_cache)
     
     # Automatically add
     if widget_name not in KV_FACTORIES:
