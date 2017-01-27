@@ -264,6 +264,10 @@ def kivy_enaml_factory(widget_class,read_only_properties=None,widget_events=None
             the Kivy proxy widget so you don't have to use 
             self.proxy.widget.<method>() all the time
         """
+        if not self.is_initialized:
+            self.initialize()
+            self.activate_proxy()
+            
         return getattr(self.proxy.widget,name)
 
     control_properties['proxy'] = Typed(ProxyWidgetControl)
