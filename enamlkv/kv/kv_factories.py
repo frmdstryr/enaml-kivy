@@ -324,6 +324,7 @@ def kivy_enaml_factory(widget_class,read_only_properties=None,widget_events=None
             
         # Connect signals so callbacks get handled by Enaml events
         for on_event in widget_events:
+            # Unbind parent observer to this event
             for e in self.widget.get_property_observers(on_event):
                 self.widget.funbind(on_event,e)
             handler = getattr(self,on_event)
