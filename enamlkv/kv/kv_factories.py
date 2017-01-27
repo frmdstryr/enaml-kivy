@@ -102,6 +102,8 @@ def get_control(dotted_widget_name,read_only_properties=None):
     log.info("Enaml: Creating control for {}".format(dotted_widget_name))
     read_only_properties = read_only_properties or []
     widget_class = pydoc.locate(dotted_widget_name) if isinstance(dotted_widget_name,basestring) else dotted_widget_name
+    if not widget_class:
+        raise ValueError('Cannot create control for "{}", please make sure the widget exists!'.format(dotted_widget_name))
     return kivy_enaml_factory(widget_class,read_only_properties=read_only_properties)['control']
 
 def get_factory(dotted_widget_name):
@@ -128,7 +130,7 @@ def kivy_enaml_factory(widget_class,read_only_properties=None,widget_events=None
     
     # Try to load from cache
     if widget_class in _CACHE:# and _CACHE[widget_class]['updated']==_updated_time:
-        log.info("Enaml: Loaded {} from cache".format(widget_class))
+        log.debug("Enaml: Loaded {} from cache".format(widget_class))
         return _CACHE[widget_class]
     
 
@@ -322,10 +324,11 @@ def kivy_enaml_factory(widget_class,read_only_properties=None,widget_events=None
             
         # Connect signals so callbacks get handled by Enaml events
         for on_event in widget_events:
+            for e in self.widget.get_property_observers(on_event):
+                self.widget.funbind(on_event,e)
             handler = getattr(self,on_event)
-            binding = {on_event:handler}
             #log.info("Enaml: {}.bind({})".format(self.widget,binding))
-            self.widget.bind(**binding)
+            self.widget.fbind(on_event,handler)
 
     
     widget_properties = {
@@ -341,11 +344,10 @@ def kivy_enaml_factory(widget_class,read_only_properties=None,widget_events=None
             if d is None:
                 return # Already destroyed
             name = kwargs.pop('__event__')
-            #log.debug("Enaml: {}.{}({})".format(self,name,args))
+            #log.info("Enaml: {}.{}({})".format(self,name,args))
             event = getattr(d,name)
-            #TODO: Is state already in sync?
-            # Trigger enaml event
-            event(args) # this doesnt do anything???
+            #: Trigger enaml event
+            event(args)
             
         widget_properties[e] = partialmethod(on_event,__event__=e)
     
