@@ -199,10 +199,8 @@ def kivy_enaml_factory(widget_class,read_only_properties=None,widget_events=None
             control_properties[k] = d_(Value(factory=lambda default_value=default_value:default_value),writable=is_writable)
             
         # Create setter method for this property
-        if (k in control_properties) and (k not in widget_events) and (k not in excluded_properties) and (not k.startswith("_")):
+        if (k in control_properties) and (k not in widget_events) and (k not in excluded_properties):# and (not k.startswith("_")):
             observed_properties.append(k)
-            
-            # TODO: Feedback loops are issues!
             
             # Write changes from Enaml to widget
             def set_property(self,value,k=k):

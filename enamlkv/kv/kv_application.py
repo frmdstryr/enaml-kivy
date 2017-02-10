@@ -20,9 +20,9 @@ from . import kv_factories
 from .kv_mime_data import KvMimeData
 
 class KvApplication(Application):
-    """ A Qt implementation of an Enaml application.
+    """ A Kivy implementation of an Enaml application.
 
-    A QtApplication uses the Qt toolkit to implement an Enaml UI that
+    An application that uses the Kivy toolkit to implement an Enaml UI that
     runs in the local process.
 
     """
@@ -32,7 +32,7 @@ class KvApplication(Application):
     root = Instance(Widget)
 
     def __init__(self):
-        """ Initialize a QtApplication.
+        """ Initialize a KvApplication.
 
         """
         super(KvApplication, self).__init__()
