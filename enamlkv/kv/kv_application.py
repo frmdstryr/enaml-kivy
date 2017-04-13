@@ -15,7 +15,7 @@ from enaml.application import Application, ProxyResolver
 from kivy.app import App
 from kivy.uix.widget import Widget
 
-from .k_deferred_caller import deferredCall, timedCall
+from kivy.clock import Clock
 from . import kv_factories
 from .kv_mime_data import KvMimeData
 
@@ -80,7 +80,7 @@ class KvApplication(Application):
             the callback.
 
         """
-        deferredCall(callback, *args, **kwargs)
+        Clock.schedule_once(lambda dt,callback=callback,args=args,kwargs=kwargs:callback(*args, **kwargs))
 
     def timed_call(self, ms, callback, *args, **kwargs):
         """ Invoke a callable on the main event loop thread at a
@@ -100,7 +100,7 @@ class KvApplication(Application):
             the callback.
 
         """
-        timedCall(ms, callback, *args, **kwargs)
+        Clock.schedule_once(lambda dt,ms=ms,callback=callback,args=args,kwargs=kwargs:callback(*args, **kwargs),ms/1000.0)
 
     def is_main_thread(self):
         """ Indicates whether the caller is on the main gui thread.
